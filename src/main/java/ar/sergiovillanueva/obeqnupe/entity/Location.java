@@ -4,13 +4,13 @@ import jakarta.persistence.*;
 
 @Table
 @Entity
-public class City {
+public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
 
-    public City() {
+    public Location() {
     }
 
     public Long getId() {

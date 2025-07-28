@@ -17,7 +17,7 @@ public class Company {
     private String page;
     private int reviews;
     @ManyToOne
-    private City city;
+    private Location location;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "company_skill",
@@ -83,12 +83,12 @@ public class Company {
         this.reviews = reviews;
     }
 
-    public City getCity() {
-        return city;
+    public Location getLocation() {
+        return location;
     }
 
-    public void setCity(City city) {
-        this.city = city;
+    public void setLocation(Location location) {
+        this.location = location;
     }
 
     public List<Skill> getSkills() {
