@@ -33,6 +33,11 @@ public class Company {
     )
     private List<Benefit> benefits = new ArrayList<>();
     @OneToMany(cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @JoinTable(
+            name = "company_company_rating",
+            joinColumns = @JoinColumn(name = "company_id"),
+            inverseJoinColumns = @JoinColumn(name = "company_rating_list_id")
+    )
     private List<CompanyRating> companyRatingList = new ArrayList<>();
 
     public Company() {
