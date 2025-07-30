@@ -1,9 +1,6 @@
 package ar.sergiovillanueva.obeqnupe.service;
 
-import ar.sergiovillanueva.obeqnupe.dto.CompanyDetailResponse;
-import ar.sergiovillanueva.obeqnupe.dto.CompanyResponse;
-import ar.sergiovillanueva.obeqnupe.dto.FilterRequest;
-import ar.sergiovillanueva.obeqnupe.dto.FiltersDto;
+import ar.sergiovillanueva.obeqnupe.dto.*;
 import ar.sergiovillanueva.obeqnupe.entity.Benefit;
 import ar.sergiovillanueva.obeqnupe.entity.Company;
 import ar.sergiovillanueva.obeqnupe.entity.Location;
@@ -14,6 +11,8 @@ import ar.sergiovillanueva.obeqnupe.repository.LocationRepository;
 import ar.sergiovillanueva.obeqnupe.repository.SkillRepository;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.expression.ExpressionException;
 import org.springframework.stereotype.Service;
@@ -37,11 +36,11 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public FiltersDto getFilters() {
+    public FilterDataResponse getFilterData() {
         List<Location> locations = locationRepository.findAll();
         List<Benefit> benefits = benefitRepository.findAll();
         List<Skill> skills = skillRepository.findAll();
-        FiltersDto filtersDto = new FiltersDto();
+        FilterDataResponse filtersDto = new FilterDataResponse();
         filtersDto.setLocations(locations);
         filtersDto.setBenefits(benefits);
         filtersDto.setSkills(skills);
@@ -49,22 +48,10 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public List<Company> findAll() {
-        Specification<Company> spec = (root, query, criteriaBuilder) -> {
-            Predicate predicate = criteriaBuilder.conjunction();
-            criteriaBuilder.and(predicate);
-            return predicate;
-        };
-
-        return companyRepository.findAll();
-    }
-
-    @Override
-    public List<CompanyResponse> findAll(FilterRequest filter) {
-        List<Company> companyList;
-//        companyList = companyRepository.findAll();
+    public PageDto<CompanyResponse> findAll(FilterRequest filter, Pageable pageable) {
+        Page<Company> companyList;
         if (filter.getLocationId() == null && filter.getSkillIds().isEmpty() && filter.getBenefitIds().isEmpty()) {
-            companyList = companyRepository.findBySkillsEmpty();
+            companyList = companyRepository.findBySkillsEmpty(pageable);
         } else {
             Specification<Company> spec = (root, query, criteriaBuilder) -> {
                 Predicate predicate = criteriaBuilder.conjunction();
@@ -97,10 +84,10 @@ public class CompanyServiceImpl implements CompanyService {
                 return predicate;
             };
 
-            companyList = companyRepository.findAll(spec);
+            companyList = companyRepository.findAll(spec, pageable);
         }
         List<CompanyResponse> companyResponses = new ArrayList<>();
-        for (Company company : companyList) {
+        for (Company company : companyList.getContent()) {
             CompanyResponse companyResponse = new CompanyResponse();
             companyResponse.setId(company.getId());
             companyResponse.setName(company.getName());
@@ -108,7 +95,15 @@ public class CompanyServiceImpl implements CompanyService {
             companyResponse.setLocationName(company.getLocation().getName());
             companyResponses.add(companyResponse);
         }
-        return companyResponses;
+
+        PageDto<CompanyResponse> response = new PageDto<>();
+        response.setPageIndex(companyList.getNumber() + 1);
+        response.setTotalPages(companyList.getTotalPages());
+        response.setHasPreviousPage(companyList.getNumber() + 1 > 1);
+        response.setHasNextPage(companyList.getNumber() + 1 < companyList.getTotalPages());
+        response.setItems(companyResponses);
+
+        return response;
     }
 
     @Override

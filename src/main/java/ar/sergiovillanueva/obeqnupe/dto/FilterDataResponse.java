@@ -7,12 +7,12 @@ import ar.sergiovillanueva.obeqnupe.entity.Skill;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FiltersDto {
+public class FilterDataResponse {
     private List<Benefit> benefits = new ArrayList<>();
     private List<Location> locations = new ArrayList<>();
     private List<Skill> skills = new ArrayList<>();
 
-    public FiltersDto() {
+    public FilterDataResponse() {
     }
 
     public List<Benefit> getBenefits() {

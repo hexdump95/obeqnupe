@@ -18,14 +18,14 @@ public class Company {
     private int reviews;
     @ManyToOne
     private Location location;
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "company_skill",
             joinColumns = @JoinColumn(name = "company_id"),
             inverseJoinColumns = @JoinColumn(name = "skill_id")
     )
     private List<Skill> skills = new ArrayList<>();
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "company_benefit",
             joinColumns = @JoinColumn(name = "company_id"),

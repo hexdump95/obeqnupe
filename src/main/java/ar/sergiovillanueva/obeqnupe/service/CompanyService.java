@@ -1,19 +1,12 @@
 package ar.sergiovillanueva.obeqnupe.service;
 
-import ar.sergiovillanueva.obeqnupe.dto.CompanyDetailResponse;
-import ar.sergiovillanueva.obeqnupe.dto.CompanyResponse;
-import ar.sergiovillanueva.obeqnupe.dto.FilterRequest;
-import ar.sergiovillanueva.obeqnupe.dto.FiltersDto;
-import ar.sergiovillanueva.obeqnupe.entity.Company;
-
-import java.util.List;
+import ar.sergiovillanueva.obeqnupe.dto.*;
+import org.springframework.data.domain.Pageable;
 
 public interface CompanyService {
-    FiltersDto getFilters();
+    FilterDataResponse getFilterData();
 
-    List<Company> findAll();
-
-    List<CompanyResponse> findAll(FilterRequest filter);
+    PageDto<CompanyResponse> findAll(FilterRequest filter, Pageable pageable);
 
     CompanyDetailResponse findOne(long id);
 }
