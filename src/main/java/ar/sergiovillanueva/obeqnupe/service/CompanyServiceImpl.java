@@ -65,7 +65,7 @@ public class CompanyServiceImpl implements CompanyService {
                 }
 
                 if (filter.getSkillIds() != null && !filter.getSkillIds().isEmpty()) {
-                    Join<Skill, Company> skillCompanyJoin = root.join("skill");
+                    Join<Skill, Company> skillCompanyJoin = root.join("skills");
                     predicate = criteriaBuilder.and(
                             predicate,
                             skillCompanyJoin.get("id").in(filter.getSkillIds())

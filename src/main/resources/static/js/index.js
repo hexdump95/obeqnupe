@@ -87,10 +87,15 @@ function getCompany(id) {
         dataType: 'json',
         success: function (res) {
             $("#company-name").html(res.name);
-            $("#company-link").html(`<a href="` + res.page + `">Visit site</a>`);
-            $("#company-location").html(res.locationName);
-            $("#company-benefits").html(res.benefits.join(', ') + '.');
-            $("#company-skills").html(res.skills.join(', ') + '.');
+
+            let html = '';
+            html += '<a href="' + res.page + '">Visit site</a>'
+            html += '<p>Location: ' + res.locationName + '</p>'
+            if (res.benefits.length > 0)
+                html += '<p>Benefits: ' + res.benefits.join(', ') + '.' + '</p>'
+            if (res.skills.length > 0)
+                html += '<p>Skills: ' + res.skills.join(', ') + '.' + '</p>'
+            $('#company-detail').html(html);
 
             $('#myModal').modal({backdrop: 'static'}).modal('show');
         }

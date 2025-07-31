@@ -54,11 +54,7 @@
                             aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
-                <div id="company-link"></div>
-                <p>Location: <span id="company-location"></span></p>
-                <p>Benefits: <span id="company-benefits"></span></p>
-                <p>Skills: <span id="company-skills"></span></p>
+            <div class="modal-body" id="company-detail">
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="closeModal()">Close</button>
