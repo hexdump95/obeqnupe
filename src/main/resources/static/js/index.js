@@ -98,5 +98,6 @@ function getCompany(id) {
 }
 
 function closeModal() {
+    document.activeElement.blur();
     $('#myModal').modal('hide');
 }

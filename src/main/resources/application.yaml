@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: obeqnupe
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  profiles:
+    active: dev

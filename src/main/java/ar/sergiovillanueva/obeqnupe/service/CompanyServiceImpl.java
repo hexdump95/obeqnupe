@@ -49,45 +49,41 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public PageDto<CompanyResponse> findAll(FilterRequest filter, Pageable pageable) {
-        Page<Company> companyList;
+        Page<Company> companyPage;
         if (filter.getLocationId() == null && filter.getSkillIds().isEmpty() && filter.getBenefitIds().isEmpty()) {
-            companyList = companyRepository.findBySkillsEmpty(pageable);
+            companyPage = companyRepository.findBySkillsEmpty(pageable);
         } else {
             Specification<Company> spec = (root, query, criteriaBuilder) -> {
                 Predicate predicate = criteriaBuilder.conjunction();
 
-                for (Integer benefitId : filter.getBenefitIds()) {
+                if (filter.getBenefitIds() != null && !filter.getBenefitIds().isEmpty()) {
                     Join<Benefit, Company> benefitCompanyJoin = root.join("benefits");
-
                     predicate = criteriaBuilder.and(
                             predicate,
-                            criteriaBuilder.equal(benefitCompanyJoin.get("id"), benefitId)
+                            benefitCompanyJoin.get("id").in(filter.getBenefitIds())
                     );
                 }
 
-                for (Integer skillId : filter.getSkillIds()) {
-                    Join<Skill, Company> skillCompanyJoin = root.join("skills");
+                if (filter.getSkillIds() != null && !filter.getSkillIds().isEmpty()) {
+                    Join<Skill, Company> skillCompanyJoin = root.join("skill");
                     predicate = criteriaBuilder.and(
                             predicate,
-                            criteriaBuilder.equal(skillCompanyJoin.get("id"), skillId)
+                            skillCompanyJoin.get("id").in(filter.getSkillIds())
                     );
                 }
 
                 if (filter.getLocationId() != null) {
                     Join<Location, Company> locationCompanyJoin = root.join("location");
-                    predicate = criteriaBuilder.and(
-                            predicate,
-                            criteriaBuilder.equal(locationCompanyJoin.get("id"), filter.getLocationId())
-                    );
+                    predicate = criteriaBuilder.equal(locationCompanyJoin.get("id"), filter.getLocationId());
                 }
-
                 return predicate;
+
             };
 
-            companyList = companyRepository.findAll(spec, pageable);
+            companyPage = companyRepository.findAll(spec, pageable);
         }
         List<CompanyResponse> companyResponses = new ArrayList<>();
-        for (Company company : companyList.getContent()) {
+        for (Company company : companyPage.getContent()) {
             CompanyResponse companyResponse = new CompanyResponse();
             companyResponse.setId(company.getId());
             companyResponse.setName(company.getName());
@@ -97,10 +93,10 @@ public class CompanyServiceImpl implements CompanyService {
         }
 
         PageDto<CompanyResponse> response = new PageDto<>();
-        response.setPageIndex(companyList.getNumber() + 1);
-        response.setTotalPages(companyList.getTotalPages());
-        response.setHasPreviousPage(companyList.getNumber() + 1 > 1);
-        response.setHasNextPage(companyList.getNumber() + 1 < companyList.getTotalPages());
+        response.setPageIndex(companyPage.getNumber() + 1);
+        response.setTotalPages(companyPage.getTotalPages());
+        response.setHasPreviousPage(companyPage.getNumber() + 1 > 1);
+        response.setHasNextPage(companyPage.getNumber() + 1 < companyPage.getTotalPages());
         response.setItems(companyResponses);
 
         return response;
