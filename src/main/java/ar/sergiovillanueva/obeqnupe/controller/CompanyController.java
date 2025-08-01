@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/v1/companies")
 public class CompanyController {
@@ -33,7 +35,7 @@ public class CompanyController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CompanyDetailResponse> getOne(@PathVariable long id) {
+    public ResponseEntity<CompanyDetailResponse> getOne(@PathVariable UUID id) {
         CompanyDetailResponse company = companyService.findOne(id);
         return ResponseEntity.ok(company);
     }

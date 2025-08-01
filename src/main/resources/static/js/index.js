@@ -49,8 +49,7 @@ function getCompanies() {
             if (res && res.items.length > 0) {
                 $.each(res.items, (_, company) => {
                     html += '<tr>'
-                    html += '<th scope="row">' + company.id + '</th>'
-                    html += '<td><a href="#" onclick="getCompany(' + company.id + '); return false;">' + company.name + '</a></td>'
+                    html += '<td><a href="#" onclick="getCompany(\'' + company.id + '\'); return false;">' + company.name + '</a></td>'
                     html += '<td><a href="' + company.page + '">Visit site!</a></td>'
                     html += '</tr>'
                 });

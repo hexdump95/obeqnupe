@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -111,7 +112,7 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public CompanyDetailResponse findOne(long id) {
+    public CompanyDetailResponse findOne(UUID id) {
         Company company = companyRepository.findById(id)
                 .orElseThrow(() -> new ExpressionException("")); // TODO: change this!
 

@@ -1,7 +1,9 @@
 package ar.sergiovillanueva.obeqnupe.dto;
 
+import java.util.UUID;
+
 public class CompanyResponse {
-    private Long id;
+    private UUID id;
     private String name;
     private String page;
     private String locationName;
@@ -9,11 +11,11 @@ public class CompanyResponse {
     public CompanyResponse() {
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

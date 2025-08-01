@@ -31,7 +31,6 @@
     <table class="table table-striped table-light w-75 mx-auto">
         <thead>
         <tr>
-            <th scope="col">ID</th>
             <th scope="col">Name</th>
             <th scope="col">Page</th>
         </tr>
