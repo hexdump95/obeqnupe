@@ -7,6 +7,7 @@ public class FilterRequest {
     private Integer locationId;
     private List<Integer> benefitIds = new ArrayList<>();
     private List<Integer> skillIds = new ArrayList<>();
+    private String query;
 
     public FilterRequest() {
     }
@@ -34,4 +35,13 @@ public class FilterRequest {
     public void setSkillIds(List<Integer> skillIds) {
         this.skillIds = skillIds;
     }
+
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
+    }
+
 }

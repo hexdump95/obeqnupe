@@ -50,7 +50,8 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public PageDto<CompanyResponse> findAll(FilterRequest filter, Pageable pageable) {
         Page<Company> companyPage;
-        if (filter.getLocationId() == null && filter.getSkillIds().isEmpty() && filter.getBenefitIds().isEmpty()) {
+        if (filter.getLocationId() == null && filter.getSkillIds().isEmpty() && filter.getBenefitIds().isEmpty()
+                && (filter.getQuery() == null || filter.getQuery().isEmpty())) {
             companyPage = companyRepository.findBySkillsEmpty(pageable);
         } else {
             Specification<Company> spec = (root, query, criteriaBuilder) -> {
@@ -75,6 +76,13 @@ public class CompanyServiceImpl implements CompanyService {
                 if (filter.getLocationId() != null) {
                     Join<Location, Company> locationCompanyJoin = root.join("location");
                     predicate = criteriaBuilder.equal(locationCompanyJoin.get("id"), filter.getLocationId());
+                }
+
+                if (filter.getQuery() != null && !filter.getQuery().isEmpty()) {
+                    predicate = criteriaBuilder.like(
+                            criteriaBuilder.upper(root.get("name")),
+                            "%" + filter.getQuery().toUpperCase() + "%"
+                    );
                 }
                 return predicate;
 
