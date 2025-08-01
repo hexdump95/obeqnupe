@@ -40,8 +40,9 @@ function getCompanies() {
         data: {
             page: currentPage,
             skillIds: skillIds,
-            locationId: $('#locationId').val(),
+            locationId: $('#location-id').val(),
             benefitIds: benefitIds,
+            query: $('#query').val(),
         },
         success: (res) => {
             let html = '';
@@ -54,31 +55,45 @@ function getCompanies() {
                     html += '</tr>'
                 });
                 $("#companies").html(html);
-                $('#pageNumber').text(`Page ${currentPage} of ${res.totalPages}`);
-                $('#prevPage').prop('disabled', !res.hasPreviousPage);
-                $('#nextPage').prop('disabled', !res.hasNextPage);
+                $('#page-number').text(`Page ${currentPage} of ${res.totalPages}`);
+
+                const prevPageId = $('#prev-page');
+                if (!res.hasPreviousPage) {
+                    prevPageId.addClass('disabled');
+                } else {
+                    if (prevPageId.hasClass('disabled'))
+                        prevPageId.removeClass('disabled');
+                }
+
+                const nextPageId = $('#next-page');
+                if (!res.hasNextPage) {
+                    nextPageId.addClass('disabled');
+                } else {
+                    if (nextPageId.hasClass('disabled'))
+                        nextPageId.removeClass('disabled');
+                }
             }
         }
     });
 }
 
-$('#filterForm').submit(function (event) {
+$('#filter-form').submit(function (event) {
     event.preventDefault();
     currentPage = 1;
     getCompanies();
 });
 
-$('#prevPage').click(function () {
+function previousPage() {
     if (currentPage > 0) {
         currentPage--;
         getCompanies();
     }
-});
+}
 
-$('#nextPage').click(function () {
+function nextPage() {
     currentPage++;
     getCompanies();
-});
+}
 
 function getCompany(id) {
     $.ajax({
@@ -97,12 +112,15 @@ function getCompany(id) {
                 html += '<p>Skills: ' + res.skills.join(', ') + '.' + '</p>'
             $('#company-detail').html(html);
 
-            $('#myModal').modal({backdrop: 'static'}).modal('show');
+            $('#my-modal').modal({backdrop: 'static'}).modal('show');
         }
     });
 }
 
 function closeModal() {
     document.activeElement.blur();
-    $('#myModal').modal('hide');
+    $('#my-modal').modal('hide');
+}
+
+function search(text) {
 }
