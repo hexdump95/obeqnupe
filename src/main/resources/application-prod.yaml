@@ -3,3 +3,4 @@ spring:
     url: jdbc:postgresql://${DB_HOST}:5432/obeqnupe
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+allowed-origins: ${ALLOWED_ORIGINS}

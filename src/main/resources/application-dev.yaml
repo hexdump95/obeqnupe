@@ -3,3 +3,4 @@ spring:
     url: jdbc:postgresql://localhost:5432/obeqnupe
     username: admin
     password: secret
+allowed-origins: "http://localhost:8080"
