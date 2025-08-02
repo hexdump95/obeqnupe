@@ -11,6 +11,8 @@ import ar.sergiovillanueva.obeqnupe.repository.LocationRepository;
 import ar.sergiovillanueva.obeqnupe.repository.SkillRepository;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -57,33 +59,61 @@ public class CompanyServiceImpl implements CompanyService {
         } else {
             Specification<Company> spec = (root, query, criteriaBuilder) -> {
                 Predicate predicate = criteriaBuilder.conjunction();
+                query.distinct(true);
 
                 if (filter.getBenefitIds() != null && !filter.getBenefitIds().isEmpty()) {
-                    Join<Benefit, Company> benefitCompanyJoin = root.join("benefits");
+                    Subquery<UUID> benefitSubquery = query.subquery(UUID.class);
+                    Root<Company> benefitRoot = benefitSubquery.from(Company.class);
+                    Join<Company, Benefit> benefitJoin = benefitRoot.join("benefits");
+
+                    benefitSubquery.select(benefitRoot.get("id"))
+                            .where(benefitJoin.get("id").in(filter.getBenefitIds()))
+                            .groupBy(benefitRoot.get("id"))
+                            .having(criteriaBuilder.equal(
+                                    criteriaBuilder.countDistinct(benefitJoin.get("id")),
+                                    filter.getBenefitIds().size()
+                            ));
+
                     predicate = criteriaBuilder.and(
                             predicate,
-                            benefitCompanyJoin.get("id").in(filter.getBenefitIds())
+                            root.get("id").in(benefitSubquery)
                     );
                 }
 
                 if (filter.getSkillIds() != null && !filter.getSkillIds().isEmpty()) {
-                    Join<Skill, Company> skillCompanyJoin = root.join("skills");
+                    Subquery<UUID> skillSubquery = query.subquery(UUID.class);
+                    Root<Company> skillRoot = skillSubquery.from(Company.class);
+                    Join<Company, Skill> skillJoin = skillRoot.join("skills");
+
+                    skillSubquery.select(skillRoot.get("id"))
+                            .where(skillJoin.get("id").in(filter.getSkillIds()))
+                            .groupBy(skillRoot.get("id"))
+                            .having(criteriaBuilder.equal(
+                                    criteriaBuilder.countDistinct(skillJoin.get("id")),
+                                    filter.getSkillIds().size()
+                            ));
+
                     predicate = criteriaBuilder.and(
                             predicate,
-                            skillCompanyJoin.get("id").in(filter.getSkillIds())
+                            root.get("id").in(skillSubquery)
                     );
                 }
 
                 if (filter.getLocationId() != null) {
                     Join<Location, Company> locationCompanyJoin = root.join("location");
-                    predicate = criteriaBuilder.equal(locationCompanyJoin.get("id"), filter.getLocationId());
+                    predicate = criteriaBuilder.and(
+                            predicate,
+                            criteriaBuilder.equal(locationCompanyJoin.get("id"), filter.getLocationId())
+                    );
                 }
 
                 if (filter.getQuery() != null && !filter.getQuery().isEmpty()) {
-                    predicate = criteriaBuilder.like(
-                            criteriaBuilder.upper(root.get("name")),
-                            "%" + filter.getQuery().toUpperCase() + "%"
-                    );
+                    predicate = criteriaBuilder.and(
+                            predicate,
+                            criteriaBuilder.like(
+                                    criteriaBuilder.upper(root.get("name")),
+                                    "%" + filter.getQuery().toUpperCase() + "%"
+                            ));
                 }
                 return predicate;
 
