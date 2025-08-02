@@ -4,35 +4,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FilterRequest {
-    private Integer locationId;
-    private List<Integer> benefitIds = new ArrayList<>();
-    private List<Integer> skillIds = new ArrayList<>();
+    private Long locationId;
+    private List<Long> benefitIds = new ArrayList<>();
+    private List<Long> skillIds = new ArrayList<>();
     private String query;
 
     public FilterRequest() {
     }
 
-    public Integer getLocationId() {
+    public Long getLocationId() {
         return locationId;
     }
 
-    public void setLocationId(Integer locationId) {
+    public void setLocationId(Long locationId) {
         this.locationId = locationId;
     }
 
-    public List<Integer> getBenefitIds() {
+    public List<Long> getBenefitIds() {
         return benefitIds;
     }
 
-    public void setBenefitIds(List<Integer> benefitIds) {
+    public void setBenefitIds(List<Long> benefitIds) {
         this.benefitIds = benefitIds;
     }
 
-    public List<Integer> getSkillIds() {
+    public List<Long> getSkillIds() {
         return skillIds;
     }
 
-    public void setSkillIds(List<Integer> skillIds) {
+    public void setSkillIds(List<Long> skillIds) {
         this.skillIds = skillIds;
     }
 

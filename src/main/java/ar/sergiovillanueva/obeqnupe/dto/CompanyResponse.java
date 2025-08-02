@@ -7,6 +7,7 @@ public class CompanyResponse {
     private String name;
     private String page;
     private String locationName;
+    private String companyTypeName;
 
     public CompanyResponse() {
     }
@@ -42,4 +43,13 @@ public class CompanyResponse {
     public void setLocationName(String locationName) {
         this.locationName = locationName;
     }
+
+    public String getCompanyTypeName() {
+        return companyTypeName;
+    }
+
+    public void setCompanyTypeName(String companyTypeName) {
+        this.companyTypeName = companyTypeName;
+    }
+
 }

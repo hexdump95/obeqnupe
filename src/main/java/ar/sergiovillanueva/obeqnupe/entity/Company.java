@@ -15,9 +15,14 @@ public class Company {
     private String permalink;
     @Column(length = 1000)
     private String page;
-    private int reviews;
+    private int upvotes;
+    private int votes;
+    private float score;
     @ManyToOne
     private Location location;
+    @ManyToOne
+    @JoinColumn(name = "company_type_id")
+    private CompanyType companyType;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "company_skill",
@@ -75,12 +80,28 @@ public class Company {
         this.page = page;
     }
 
-    public int getReviews() {
-        return reviews;
+    public int getUpvotes() {
+        return upvotes;
     }
 
-    public void setReviews(int reviews) {
-        this.reviews = reviews;
+    public void setUpvotes(int upvotes) {
+        this.upvotes = upvotes;
+    }
+
+    public int getVotes() {
+        return votes;
+    }
+
+    public void setVotes(int votes) {
+        this.votes = votes;
+    }
+
+    public float getScore() {
+        return score;
+    }
+
+    public void setScore(float score) {
+        this.score = score;
     }
 
     public Location getLocation() {
@@ -89,6 +110,14 @@ public class Company {
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    public CompanyType getCompanyType() {
+        return companyType;
+    }
+
+    public void setCompanyType(CompanyType companyType) {
+        this.companyType = companyType;
     }
 
     public List<Skill> getSkills() {
