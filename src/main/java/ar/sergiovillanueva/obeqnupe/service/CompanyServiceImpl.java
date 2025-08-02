@@ -1,14 +1,8 @@
 package ar.sergiovillanueva.obeqnupe.service;
 
 import ar.sergiovillanueva.obeqnupe.dto.*;
-import ar.sergiovillanueva.obeqnupe.entity.Benefit;
-import ar.sergiovillanueva.obeqnupe.entity.Company;
-import ar.sergiovillanueva.obeqnupe.entity.Location;
-import ar.sergiovillanueva.obeqnupe.entity.Skill;
-import ar.sergiovillanueva.obeqnupe.repository.BenefitRepository;
-import ar.sergiovillanueva.obeqnupe.repository.CompanyRepository;
-import ar.sergiovillanueva.obeqnupe.repository.LocationRepository;
-import ar.sergiovillanueva.obeqnupe.repository.SkillRepository;
+import ar.sergiovillanueva.obeqnupe.entity.*;
+import ar.sergiovillanueva.obeqnupe.repository.*;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
@@ -30,12 +24,14 @@ public class CompanyServiceImpl implements CompanyService {
     private final LocationRepository locationRepository;
     private final BenefitRepository benefitRepository;
     private final SkillRepository skillRepository;
+    private final CompanyTypeRepository companyTypeRepository;
 
-    public CompanyServiceImpl(CompanyRepository companyRepository, LocationRepository locationRepository, BenefitRepository benefitRepository, SkillRepository skillRepository) {
+    public CompanyServiceImpl(CompanyRepository companyRepository, LocationRepository locationRepository, BenefitRepository benefitRepository, SkillRepository skillRepository, CompanyTypeRepository companyTypeRepository) {
         this.companyRepository = companyRepository;
         this.locationRepository = locationRepository;
         this.benefitRepository = benefitRepository;
         this.skillRepository = skillRepository;
+        this.companyTypeRepository = companyTypeRepository;
     }
 
     @Override
@@ -43,10 +39,12 @@ public class CompanyServiceImpl implements CompanyService {
         List<Location> locations = locationRepository.findAll();
         List<Benefit> benefits = benefitRepository.findAll();
         List<Skill> skills = skillRepository.findAll();
+        List<CompanyType> companyTypes = companyTypeRepository.findAll();
         FilterDataResponse filtersDto = new FilterDataResponse();
         filtersDto.setLocations(locations);
         filtersDto.setBenefits(benefits);
         filtersDto.setSkills(skills);
+        filtersDto.setCompanyTypes(companyTypes);
         return filtersDto;
     }
 
@@ -54,7 +52,7 @@ public class CompanyServiceImpl implements CompanyService {
     public PageDto<CompanyResponse> findAll(FilterRequest filter, Pageable pageable) {
         Page<Company> companyPage;
         if (filter.getLocationId() == null && filter.getSkillIds().isEmpty() && filter.getBenefitIds().isEmpty()
-                && (filter.getQuery() == null || filter.getQuery().isEmpty())) {
+                && filter.getCompanyTypeId() == null && (filter.getQuery() == null || filter.getQuery().isEmpty())) {
             companyPage = companyRepository.findBySkillsEmpty(pageable);
         } else {
             Specification<Company> spec = (root, query, criteriaBuilder) -> {
@@ -104,6 +102,14 @@ public class CompanyServiceImpl implements CompanyService {
                     predicate = criteriaBuilder.and(
                             predicate,
                             criteriaBuilder.equal(locationCompanyJoin.get("id"), filter.getLocationId())
+                    );
+                }
+
+                if (filter.getCompanyTypeId() != null) {
+                    Join<CompanyType, Company> companyTypeCompanyJoin = root.join("companyType");
+                    predicate = criteriaBuilder.and(
+                            predicate,
+                            criteriaBuilder.equal(companyTypeCompanyJoin.get("id"), filter.getCompanyTypeId())
                     );
                 }
 

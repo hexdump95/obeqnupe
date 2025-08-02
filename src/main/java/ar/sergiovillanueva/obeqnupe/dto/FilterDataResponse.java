@@ -1,6 +1,7 @@
 package ar.sergiovillanueva.obeqnupe.dto;
 
 import ar.sergiovillanueva.obeqnupe.entity.Benefit;
+import ar.sergiovillanueva.obeqnupe.entity.CompanyType;
 import ar.sergiovillanueva.obeqnupe.entity.Location;
 import ar.sergiovillanueva.obeqnupe.entity.Skill;
 
@@ -11,6 +12,7 @@ public class FilterDataResponse {
     private List<Benefit> benefits = new ArrayList<>();
     private List<Location> locations = new ArrayList<>();
     private List<Skill> skills = new ArrayList<>();
+    private List<CompanyType> companyTypes = new ArrayList<>();
 
     public FilterDataResponse() {
     }
@@ -38,4 +40,13 @@ public class FilterDataResponse {
     public void setSkills(List<Skill> skills) {
         this.skills = skills;
     }
+
+    public List<CompanyType> getCompanyTypes() {
+        return companyTypes;
+    }
+
+    public void setCompanyTypes(List<CompanyType> companyTypes) {
+        this.companyTypes = companyTypes;
+    }
+
 }

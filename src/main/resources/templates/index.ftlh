@@ -65,6 +65,16 @@
         </div>
         <br>
         <div class="form-floating">
+            <select class="form-select" id="company-type">
+                <option value=""></option>
+                <#list filterData.companyTypes as companyType>
+                    <option value="${companyType.id}">${companyType.name}</option>
+                </#list>
+            </select>
+            <label for="company-type">Type</label>
+        </div>
+        <br>
+        <div class="form-floating">
             <select class="form-select" id="location">
                 <option value=""></option>
                 <#list filterData.locations as location>

@@ -39,9 +39,12 @@ function getQueryData() {
         benefitIds: benefitIds
     }
     const locationId = $('#location').val();
+    const companyTypeId = $('#company-type').val();
     const query = $('#query').val();
     if (locationId)
         data.locationId = locationId;
+    if (companyTypeId)
+        data.companyTypeId = companyTypeId;
     if (query)
         data.query = query;
     return data;
