@@ -48,6 +48,7 @@ function getQueryData() {
 }
 
 function getCompanies() {
+    $('#spinner').removeClass('d-none').addClass('d-flex');
     $.ajax({
         type: 'GET',
         url: '/api/v1/companies',
@@ -71,21 +72,9 @@ function getCompanies() {
                 $('#page-info').html(`Page ${currentPage} of ${res.totalPages}`);
                 $('#current-page').html(currentPage);
 
-                const prevPageId = $('#prev-page');
-                if (!res.hasPreviousPage) {
-                    prevPageId.addClass('disabled');
-                } else {
-                    if (prevPageId.hasClass('disabled'))
-                        prevPageId.removeClass('disabled');
-                }
+                $('#prev-page').toggleClass('disabled', !res.hasPreviousPage);
 
-                const nextPageId = $('#next-page');
-                if (!res.hasNextPage) {
-                    nextPageId.addClass('disabled');
-                } else {
-                    if (nextPageId.hasClass('disabled'))
-                        nextPageId.removeClass('disabled');
-                }
+                $('#next-page').toggleClass('disabled', !res.hasNextPage);
                 if (paginationId.is(':hidden')) {
                     paginationId.show();
                 }
@@ -94,6 +83,7 @@ function getCompanies() {
                 paginationId.hide();
             }
             $("#companies").html(html);
+            $('#spinner').removeClass('d-flex').addClass('d-none');
         }
     });
 }
@@ -117,6 +107,7 @@ function nextPage() {
 }
 
 function getCompany(id) {
+    $('#spinner').removeClass('d-none').addClass('d-flex');
     $.ajax({
         type: 'GET',
         url: '/api/v1/companies/' + id,
@@ -134,6 +125,7 @@ function getCompany(id) {
             $('#company-detail').html(html);
 
             $('#my-modal').modal({backdrop: 'static'}).modal('show');
+            $('#spinner').removeClass('d-flex').addClass('d-none');
         }
     });
 }

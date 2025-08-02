@@ -7,8 +7,21 @@
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-<h1>obeqnupe</h1>
-<div class="container">
+
+<div id="spinner" class="d-none justify-content-center align-items-center position-fixed top-0 left-0 w-100 h-100 z-3">
+    <div class="spinner-border text-info" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+<nav class="navbar fixed-top navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">obeqnupe</a>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <h1>obeqnupe</h1>
 
     <form class="border border-1 rounded-1 p-4" id="filter-form">
 
@@ -66,7 +79,6 @@
             <label for="query">Name</label>
         </div>
         <div id="result-search"></div>
-        <br>
         <button class="btn btn-primary" type="submit">Show results</button>
     </form>
 
