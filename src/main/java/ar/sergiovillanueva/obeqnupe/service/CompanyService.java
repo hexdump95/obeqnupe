@@ -1,14 +1,13 @@
 package ar.sergiovillanueva.obeqnupe.service;
 
 import ar.sergiovillanueva.obeqnupe.dto.*;
-import org.springframework.data.domain.Pageable;
 
 import java.util.UUID;
 
 public interface CompanyService {
     FilterDataResponse getFilterData();
 
-    PageDto<CompanyResponse> findAll(FilterRequest filter, Pageable pageable);
+    PageDto<CompanyResponse> findAll(FilterRequest filter, int page);
 
     CompanyDetailResponse findOne(UUID id);
 }

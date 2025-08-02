@@ -8,7 +8,9 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.expression.ExpressionException;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,7 @@ public class CompanyServiceImpl implements CompanyService {
     private final BenefitRepository benefitRepository;
     private final SkillRepository skillRepository;
     private final CompanyTypeRepository companyTypeRepository;
+    private static final Integer PAGE_SIZE = 12;
 
     public CompanyServiceImpl(CompanyRepository companyRepository, LocationRepository locationRepository, BenefitRepository benefitRepository, SkillRepository skillRepository, CompanyTypeRepository companyTypeRepository) {
         this.companyRepository = companyRepository;
@@ -49,8 +52,11 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public PageDto<CompanyResponse> findAll(FilterRequest filter, Pageable pageable) {
+    public PageDto<CompanyResponse> findAll(FilterRequest filter, int page) {
         Page<Company> companyPage;
+        Sort sort = Sort.by(Sort.Direction.ASC, "name");
+        Pageable pageable = PageRequest.of(page, PAGE_SIZE, sort);
+
         if (filter.getLocationId() == null && filter.getSkillIds().isEmpty() && filter.getBenefitIds().isEmpty()
                 && filter.getCompanyTypeId() == null && (filter.getQuery() == null || filter.getQuery().isEmpty())) {
             companyPage = companyRepository.findBySkillsEmpty(pageable);
