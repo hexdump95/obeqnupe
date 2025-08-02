@@ -16,7 +16,7 @@
 
 <nav class="navbar fixed-top navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">obeqnupe</a>
+        <p>obeqnupe</p>
     </div>
 </nav>
 
@@ -82,7 +82,7 @@
         <button class="btn btn-primary" type="submit">Show results</button>
     </form>
 
-    <table class="table table-striped table-dark mx-auto">
+    <table id="table" class="table table-hover mx-auto w-100 table-layout-fixed">
         <thead>
         <tr>
             <th scope="col">Name</th>

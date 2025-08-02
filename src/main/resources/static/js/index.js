@@ -55,15 +55,16 @@ function getCompanies() {
         dataType: 'json',
         data: getQueryData(),
         success: (res) => {
+            const columnWidth = $('#table').width() / 4;
             let html = '';
             const paginationId = $('#pagination');
             if (res.items.length > 0) {
                 $.each(res.items, (_, company) => {
                     html += '<tr>';
-                    html += '<td>' + company.name + '</td>';
-                    html += '<td>' + company.companyTypeName + '</td>';
-                    html += '<td>' + company.locationName + '</td>';
-                    html += '<td>';
+                    html += '<td class="overflow-auto" style="width: ' + columnWidth + 'px">' + company.name + '</td>';
+                    html += '<td class="overflow-auto" style="width: ' + columnWidth + 'px">' + company.companyTypeName + '</td>';
+                    html += '<td class="overflow-auto" style="width: ' + columnWidth + 'px">' + company.locationName + '</td>';
+                    html += '<td class="overflow-auto" style="width: ' + columnWidth + 'px">';
                     html += '<button type="button" class="btn btn-default" data-bs-toggle="modal" title="View info" data-bs-target="#my-modal" onclick="getCompany(\'' + company.id + '\');"><i class="bi bi-eye"></i></button>';
                     html += '<a href="' + company.page + '" class="btn btn-link" title="Visit site"><i class="bi bi-link-45deg"></i></a>';
                     html += '</td>';

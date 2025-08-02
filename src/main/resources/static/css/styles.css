@@ -2,3 +2,7 @@
     cursor: pointer;
     user-select: none;
 }
+
+.table-layout-fixed {
+    table-layout: fixed;
+}
