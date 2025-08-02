@@ -64,7 +64,7 @@ function getCompanies() {
                     html += '<td>' + company.companyTypeName + '</td>';
                     html += '<td>' + company.locationName + '</td>';
                     html += '<td>';
-                    html += '<button type="button" class="btn btn-default" onclick="getCompany(\'' + company.id + '\');" title="View info"><i class="bi bi-eye"></i></button>';
+                    html += '<button type="button" class="btn btn-default" data-bs-toggle="modal" title="View info" data-bs-target="#my-modal" onclick="getCompany(\'' + company.id + '\');"><i class="bi bi-eye"></i></button>';
                     html += '<a href="' + company.page + '" class="btn btn-link" title="Visit site"><i class="bi bi-link-45deg"></i></a>';
                     html += '</td>';
                     html += '</tr>';
@@ -107,6 +107,7 @@ function nextPage() {
 }
 
 function getCompany(id) {
+    $('#company-detail').empty();
     $('#spinner').removeClass('d-none').addClass('d-flex');
     $.ajax({
         type: 'GET',
@@ -124,15 +125,9 @@ function getCompany(id) {
                 html += '<p>Skills: ' + res.skills.join(', ') + '.' + '</p>';
             $('#company-detail').html(html);
 
-            $('#my-modal').modal({backdrop: 'static'}).modal('show');
             $('#spinner').removeClass('d-flex').addClass('d-none');
         }
     });
-}
-
-function closeModal() {
-    document.activeElement.blur();
-    $('#my-modal').modal('hide');
 }
 
 function search(text) {
