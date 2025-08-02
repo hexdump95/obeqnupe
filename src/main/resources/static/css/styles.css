@@ -1,0 +1,4 @@
+.badge-button:hover {
+    cursor: pointer;
+    user-select: none;
+}

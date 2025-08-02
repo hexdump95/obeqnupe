@@ -10,12 +10,12 @@ function addSkill(element, id) {
     const idx = skillIds.indexOf(id);
     if (idx === -1) {
         skillIds.push(id);
-        element.classList.remove('text-bg-light');
-        element.classList.add('text-bg-dark');
+        element.classList.remove('text-bg-dark');
+        element.classList.add('text-bg-secondary');
     } else {
         skillIds = skillIds.filter(x => x !== id);
-        element.classList.remove('text-bg-dark');
-        element.classList.add('text-bg-light');
+        element.classList.remove('text-bg-secondary');
+        element.classList.add('text-bg-dark');
     }
 }
 
@@ -23,13 +23,28 @@ function addBenefit(element, id) {
     const idx = benefitIds.indexOf(id);
     if (idx === -1) {
         benefitIds.push(id);
-        element.classList.remove('text-bg-light');
-        element.classList.add('text-bg-dark');
+        element.classList.remove('text-bg-dark');
+        element.classList.add('text-bg-secondary');
     } else {
         benefitIds = benefitIds.filter(x => x !== id);
-        element.classList.remove('text-bg-dark');
-        element.classList.add('text-bg-light');
+        element.classList.remove('text-bg-secondary');
+        element.classList.add('text-bg-dark');
     }
+}
+
+function getQueryData() {
+    let data = {
+        page: currentPage,
+        skillIds: skillIds,
+        benefitIds: benefitIds
+    }
+    const locationId = $('#location').val();
+    const query = $('#query').val();
+    if (locationId)
+        data.locationId = locationId;
+    if (query)
+        data.query = query;
+    return data;
 }
 
 function getCompanies() {
@@ -37,24 +52,24 @@ function getCompanies() {
         type: 'GET',
         url: '/api/v1/companies',
         dataType: 'json',
-        data: {
-            page: currentPage,
-            skillIds: skillIds,
-            locationId: $('#location-id').val(),
-            benefitIds: benefitIds,
-            query: $('#query').val(),
-        },
+        data: getQueryData(),
         success: (res) => {
             let html = '';
-            if (res && res.items.length > 0) {
+            const paginationId = $('#pagination');
+            if (res.items.length > 0) {
                 $.each(res.items, (_, company) => {
-                    html += '<tr>'
-                    html += '<td><a href="#" onclick="getCompany(\'' + company.id + '\'); return false;">' + company.name + '</a></td>'
-                    html += '<td><a href="' + company.page + '">Visit site!</a></td>'
-                    html += '</tr>'
+                    html += '<tr>';
+                    html += '<td>' + company.name + '</td>';
+                    html += '<td>' + company.companyTypeName + '</td>';
+                    html += '<td>' + company.locationName + '</td>';
+                    html += '<td>';
+                    html += '<button type="button" class="btn btn-default" onclick="getCompany(\'' + company.id + '\');" title="View info"><i class="bi bi-eye"></i></button>';
+                    html += '<a href="' + company.page + '" class="btn btn-link" title="Visit site"><i class="bi bi-link-45deg"></i></a>';
+                    html += '</td>';
+                    html += '</tr>';
                 });
-                $("#companies").html(html);
-                $('#page-number').text(`Page ${currentPage} of ${res.totalPages}`);
+                $('#page-info').html(`Page ${currentPage} of ${res.totalPages}`);
+                $('#current-page').html(currentPage);
 
                 const prevPageId = $('#prev-page');
                 if (!res.hasPreviousPage) {
@@ -71,7 +86,14 @@ function getCompanies() {
                     if (nextPageId.hasClass('disabled'))
                         nextPageId.removeClass('disabled');
                 }
+                if (paginationId.is(':hidden')) {
+                    paginationId.show();
+                }
+            } else {
+                html += '<tr><td colspan="4">There are no items.</td></tr>';
+                paginationId.hide();
             }
+            $("#companies").html(html);
         }
     });
 }
@@ -103,12 +125,12 @@ function getCompany(id) {
             $("#company-name").html(res.name);
 
             let html = '';
-            html += '<a href="' + res.page + '">Visit site</a>'
-            html += '<p>Location: ' + res.locationName + '</p>'
+            html += '<a href="' + res.page + '">Visit site</a>';
+            html += '<p>Location: ' + res.locationName + '</p>';
             if (res.benefits.length > 0)
-                html += '<p>Benefits: ' + res.benefits.join(', ') + '.' + '</p>'
+                html += '<p>Benefits: ' + res.benefits.join(', ') + '.' + '</p>';
             if (res.skills.length > 0)
-                html += '<p>Skills: ' + res.skills.join(', ') + '.' + '</p>'
+                html += '<p>Skills: ' + res.skills.join(', ') + '.' + '</p>';
             $('#company-detail').html(html);
 
             $('#my-modal').modal({backdrop: 'static'}).modal('show');
@@ -122,4 +144,25 @@ function closeModal() {
 }
 
 function search(text) {
+    if (text.length < 3)
+        return;
+    $.ajax({
+        type: 'GET',
+        url: '/api/v1/search?query=' + text,
+        dataType: 'json',
+        success: function (res) {
+            console.log(res);
+            let html = '<ul>';
+            $.each(res, (_, x) => {
+                html += '<li onclick="completeText(\'' + x + '\');">' + x + '</li>';
+            });
+            html += '</ul>';
+            $('#result-search').html(html);
+        }
+    });
+}
+
+function completeText(text) {
+    $('#query').val(text);
+    $('#result-search').empty();
 }
