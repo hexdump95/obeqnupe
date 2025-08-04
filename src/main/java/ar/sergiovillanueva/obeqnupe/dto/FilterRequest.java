@@ -7,7 +7,9 @@ public class FilterRequest {
     private Long locationId;
     private Long companyTypeId;
     private List<Long> benefitIds = new ArrayList<>();
+    private List<Long> notBenefitIds = new ArrayList<>();
     private List<Long> skillIds = new ArrayList<>();
+    private List<Long> notSkillIds = new ArrayList<>();
     private String query;
 
     public FilterRequest() {
@@ -37,12 +39,28 @@ public class FilterRequest {
         this.benefitIds = benefitIds;
     }
 
+    public List<Long> getNotBenefitIds() {
+        return notBenefitIds;
+    }
+
+    public void setNotBenefitIds(List<Long> notBenefitIds) {
+        this.notBenefitIds = notBenefitIds;
+    }
+
     public List<Long> getSkillIds() {
         return skillIds;
     }
 
     public void setSkillIds(List<Long> skillIds) {
         this.skillIds = skillIds;
+    }
+
+    public List<Long> getNotSkillIds() {
+        return notSkillIds;
+    }
+
+    public void setNotSkillIds(List<Long> notSkillIds) {
+        this.notSkillIds = notSkillIds;
     }
 
     public String getQuery() {

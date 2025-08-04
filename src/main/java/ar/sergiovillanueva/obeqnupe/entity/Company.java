@@ -2,9 +2,7 @@ package ar.sergiovillanueva.obeqnupe.entity;
 
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Table
 @Entity
@@ -18,26 +16,26 @@ public class Company {
     private int upvotes;
     private int votes;
     private float score;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Location location;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_type_id")
     private CompanyType companyType;
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
     @JoinTable(
             name = "company_skill",
             joinColumns = @JoinColumn(name = "company_id"),
             inverseJoinColumns = @JoinColumn(name = "skill_id")
     )
-    private List<Skill> skills = new ArrayList<>();
-    @ManyToMany(fetch = FetchType.EAGER)
+    private Set<Skill> skills = new HashSet<>();
+    @ManyToMany
     @JoinTable(
             name = "company_benefit",
             joinColumns = @JoinColumn(name = "company_id"),
             inverseJoinColumns = @JoinColumn(name = "benefit_id")
     )
-    private List<Benefit> benefits = new ArrayList<>();
-    @OneToMany(cascade = {CascadeType.ALL}, orphanRemoval = true)
+    private Set<Benefit> benefits = new HashSet<>();
+    @OneToMany(cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinTable(
             name = "company_company_rating",
             joinColumns = @JoinColumn(name = "company_id"),
@@ -120,24 +118,20 @@ public class Company {
         this.companyType = companyType;
     }
 
-    public List<Skill> getSkills() {
+    public Set<Skill> getSkills() {
         return skills;
     }
 
-    public void setSkills(List<Skill> skills) {
+    public void setSkills(Set<Skill> skills) {
         this.skills = skills;
     }
 
-    public List<Benefit> getBenefits() {
+    public Set<Benefit> getBenefits() {
         return benefits;
     }
 
-    public void setBenefits(List<Benefit> benefits) {
+    public void setBenefits(Set<Benefit> benefits) {
         this.benefits = benefits;
-    }
-
-    public void addBenefit(Benefit benefit) {
-        this.benefits.add(benefit);
     }
 
     public List<CompanyRating> getCompanyRatingList() {

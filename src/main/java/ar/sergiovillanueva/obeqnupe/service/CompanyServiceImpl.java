@@ -3,10 +3,7 @@ package ar.sergiovillanueva.obeqnupe.service;
 import ar.sergiovillanueva.obeqnupe.dto.*;
 import ar.sergiovillanueva.obeqnupe.entity.*;
 import ar.sergiovillanueva.obeqnupe.repository.*;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
-import jakarta.persistence.criteria.Subquery;
+import ar.sergiovillanueva.obeqnupe.specification.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -57,82 +54,45 @@ public class CompanyServiceImpl implements CompanyService {
         Sort sort = Sort.by(Sort.Direction.ASC, "name");
         Pageable pageable = PageRequest.of(page, PAGE_SIZE, sort);
 
-        if (filter.getLocationId() == null && filter.getSkillIds().isEmpty() && filter.getBenefitIds().isEmpty()
+        Specification<Company> spec = new TrueSpecification<>();
+        spec = spec.and(new CompanyFetchLazySpecification());
+
+        if (filter.getLocationId() == null && filter.getSkillIds().isEmpty() && filter.getNotSkillIds().isEmpty()
+                && filter.getBenefitIds().isEmpty() && filter.getNotBenefitIds().isEmpty()
                 && filter.getCompanyTypeId() == null && (filter.getQuery() == null || filter.getQuery().isEmpty())) {
-            companyPage = companyRepository.findBySkillsEmpty(pageable);
+            spec = spec.and(new CompanyHasNoSkillsAndNoBenefitsSpecification());
+
         } else {
-            Specification<Company> spec = (root, query, criteriaBuilder) -> {
-                Predicate predicate = criteriaBuilder.conjunction();
-                query.distinct(true);
+            if (filter.getBenefitIds() != null && !filter.getBenefitIds().isEmpty()) {
+                spec = spec.and(new CompanyHasBenefitsSpecification(filter.getBenefitIds()));
+            }
 
-                if (filter.getBenefitIds() != null && !filter.getBenefitIds().isEmpty()) {
-                    Subquery<UUID> benefitSubquery = query.subquery(UUID.class);
-                    Root<Company> benefitRoot = benefitSubquery.from(Company.class);
-                    Join<Company, Benefit> benefitJoin = benefitRoot.join("benefits");
+            if (filter.getNotBenefitIds() != null && !filter.getNotBenefitIds().isEmpty()) {
+                spec = spec.and(new CompanyHasNotBenefitsSpecification(filter.getNotBenefitIds()));
+            }
 
-                    benefitSubquery.select(benefitRoot.get("id"))
-                            .where(benefitJoin.get("id").in(filter.getBenefitIds()))
-                            .groupBy(benefitRoot.get("id"))
-                            .having(criteriaBuilder.equal(
-                                    criteriaBuilder.countDistinct(benefitJoin.get("id")),
-                                    filter.getBenefitIds().size()
-                            ));
+            if (filter.getSkillIds() != null && !filter.getSkillIds().isEmpty()) {
+                spec = spec.and(new CompanyHasSkillsSpecification(filter.getSkillIds()));
+            }
 
-                    predicate = criteriaBuilder.and(
-                            predicate,
-                            root.get("id").in(benefitSubquery)
-                    );
-                }
+            if(filter.getNotSkillIds() != null && !filter.getNotSkillIds().isEmpty()) {
+                spec = spec.and(new CompanyHasNotSkillsSpecification(filter.getNotSkillIds()));
+            }
 
-                if (filter.getSkillIds() != null && !filter.getSkillIds().isEmpty()) {
-                    Subquery<UUID> skillSubquery = query.subquery(UUID.class);
-                    Root<Company> skillRoot = skillSubquery.from(Company.class);
-                    Join<Company, Skill> skillJoin = skillRoot.join("skills");
+            if (filter.getLocationId() != null) {
+                spec = spec.and(new CompanyHasLocationSpecification(filter.getLocationId()));
+            }
 
-                    skillSubquery.select(skillRoot.get("id"))
-                            .where(skillJoin.get("id").in(filter.getSkillIds()))
-                            .groupBy(skillRoot.get("id"))
-                            .having(criteriaBuilder.equal(
-                                    criteriaBuilder.countDistinct(skillJoin.get("id")),
-                                    filter.getSkillIds().size()
-                            ));
+            if (filter.getCompanyTypeId() != null) {
+                spec = spec.and(new CompanyHasCompanyTypeSpecification(filter.getCompanyTypeId()));
+            }
 
-                    predicate = criteriaBuilder.and(
-                            predicate,
-                            root.get("id").in(skillSubquery)
-                    );
-                }
+            if (filter.getQuery() != null && !filter.getQuery().isEmpty()) {
+                spec = spec.and(new CompanyHasNameLikeSpecification(filter.getQuery()));
+            }
 
-                if (filter.getLocationId() != null) {
-                    Join<Location, Company> locationCompanyJoin = root.join("location");
-                    predicate = criteriaBuilder.and(
-                            predicate,
-                            criteriaBuilder.equal(locationCompanyJoin.get("id"), filter.getLocationId())
-                    );
-                }
-
-                if (filter.getCompanyTypeId() != null) {
-                    Join<CompanyType, Company> companyTypeCompanyJoin = root.join("companyType");
-                    predicate = criteriaBuilder.and(
-                            predicate,
-                            criteriaBuilder.equal(companyTypeCompanyJoin.get("id"), filter.getCompanyTypeId())
-                    );
-                }
-
-                if (filter.getQuery() != null && !filter.getQuery().isEmpty()) {
-                    predicate = criteriaBuilder.and(
-                            predicate,
-                            criteriaBuilder.like(
-                                    criteriaBuilder.upper(root.get("name")),
-                                    "%" + filter.getQuery().toUpperCase() + "%"
-                            ));
-                }
-                return predicate;
-
-            };
-
-            companyPage = companyRepository.findAll(spec, pageable);
         }
+        companyPage = companyRepository.findAll(spec, pageable);
         List<CompanyResponse> companyResponses = new ArrayList<>();
         for (Company company : companyPage.getContent()) {
             CompanyResponse companyResponse = new CompanyResponse();

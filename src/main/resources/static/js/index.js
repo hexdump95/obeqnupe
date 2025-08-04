@@ -1,33 +1,51 @@
 let currentPage = 1;
 let skillIds = [];
+let notSkillIds = [];
 let benefitIds = [];
+let notBenefitIds = [];
 
 $(document).ready(() => {
     getCompanies();
 });
 
 function addSkill(element, id) {
-    const idx = skillIds.indexOf(id);
-    if (idx === -1) {
+    const isInSkillsIds = skillIds.indexOf(id) !== -1;
+    const isInNotSkillsIds = notSkillIds.indexOf(id) !== -1;
+    if (!isInSkillsIds && !isInNotSkillsIds) {
         skillIds.push(id);
         element.classList.remove('text-bg-dark');
         element.classList.add('text-bg-secondary');
-    } else {
+    }
+    if (isInSkillsIds) {
         skillIds = skillIds.filter(x => x !== id);
+        notSkillIds.push(id);
         element.classList.remove('text-bg-secondary');
+        element.classList.add('text-bg-danger');
+    }
+    if (isInNotSkillsIds) {
+        notSkillIds = notSkillIds.filter(x => x !== id);
+        element.classList.remove('text-bg-danger');
         element.classList.add('text-bg-dark');
     }
 }
 
 function addBenefit(element, id) {
-    const idx = benefitIds.indexOf(id);
-    if (idx === -1) {
+    const isInBenefitIds = benefitIds.indexOf(id) !== -1;
+    const isInNotBenefitIds = notBenefitIds.indexOf(id) !== -1;
+    if (!isInBenefitIds && !isInNotBenefitIds) {
         benefitIds.push(id);
         element.classList.remove('text-bg-dark');
         element.classList.add('text-bg-secondary');
-    } else {
+    }
+    if (isInBenefitIds) {
         benefitIds = benefitIds.filter(x => x !== id);
+        notBenefitIds.push(id);
         element.classList.remove('text-bg-secondary');
+        element.classList.add('text-bg-danger');
+    }
+    if (isInNotBenefitIds) {
+        notBenefitIds = notBenefitIds.filter(x => x !== id);
+        element.classList.remove('text-bg-danger');
         element.classList.add('text-bg-dark');
     }
 }
@@ -36,7 +54,9 @@ function getQueryData() {
     let data = {
         page: currentPage,
         skillIds: skillIds,
-        benefitIds: benefitIds
+        notSkillIds: notSkillIds,
+        benefitIds: benefitIds,
+        notBenefitIds: notBenefitIds,
     }
     const locationId = $('#location').val();
     const companyTypeId = $('#company-type').val();
