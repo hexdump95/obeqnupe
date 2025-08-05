@@ -22,7 +22,7 @@ public class HomeController {
 
         model.addAttribute("filterData", filterData);
 
-        return "index";
+        return "home/index";
     }
 
 }
