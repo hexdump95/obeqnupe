@@ -39,7 +39,7 @@ public class Company {
     @JoinTable(
             name = "company_company_rating",
             joinColumns = @JoinColumn(name = "company_id"),
-            inverseJoinColumns = @JoinColumn(name = "company_rating_list_id")
+            inverseJoinColumns = @JoinColumn(name = "company_rating_id")
     )
     private List<CompanyRating> companyRatingList = new ArrayList<>();
 

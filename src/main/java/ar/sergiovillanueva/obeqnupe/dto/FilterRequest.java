@@ -7,9 +7,9 @@ public class FilterRequest {
     private Long locationId;
     private Long companyTypeId;
     private List<Long> benefitIds = new ArrayList<>();
-    private List<Long> notBenefitIds = new ArrayList<>();
+    private List<Long> excludedBenefitIds = new ArrayList<>();
     private List<Long> skillIds = new ArrayList<>();
-    private List<Long> notSkillIds = new ArrayList<>();
+    private List<Long> excludedSkillIds = new ArrayList<>();
     private String query;
 
     public FilterRequest() {
@@ -39,12 +39,12 @@ public class FilterRequest {
         this.benefitIds = benefitIds;
     }
 
-    public List<Long> getNotBenefitIds() {
-        return notBenefitIds;
+    public List<Long> getExcludedBenefitIds() {
+        return excludedBenefitIds;
     }
 
-    public void setNotBenefitIds(List<Long> notBenefitIds) {
-        this.notBenefitIds = notBenefitIds;
+    public void setExcludedBenefitIds(List<Long> excludedBenefitIds) {
+        this.excludedBenefitIds = excludedBenefitIds;
     }
 
     public List<Long> getSkillIds() {
@@ -55,12 +55,12 @@ public class FilterRequest {
         this.skillIds = skillIds;
     }
 
-    public List<Long> getNotSkillIds() {
-        return notSkillIds;
+    public List<Long> getExcludedSkillIds() {
+        return excludedSkillIds;
     }
 
-    public void setNotSkillIds(List<Long> notSkillIds) {
-        this.notSkillIds = notSkillIds;
+    public void setExcludedSkillIds(List<Long> excludedSkillIds) {
+        this.excludedSkillIds = excludedSkillIds;
     }
 
     public String getQuery() {

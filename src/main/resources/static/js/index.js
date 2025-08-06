@@ -1,8 +1,8 @@
 let currentPage = 1;
 let skillIds = [];
-let notSkillIds = [];
+let excludedSkillIds = [];
 let benefitIds = [];
-let notBenefitIds = [];
+let excludedBenefitIds = [];
 
 $(document).ready(() => {
     getCompanies();
@@ -10,20 +10,20 @@ $(document).ready(() => {
 
 function addSkill(element, id) {
     const isInSkillsIds = skillIds.indexOf(id) !== -1;
-    const isInNotSkillsIds = notSkillIds.indexOf(id) !== -1;
-    if (!isInSkillsIds && !isInNotSkillsIds) {
+    const isInExcludedSkillIds = excludedSkillIds.indexOf(id) !== -1;
+    if (!isInSkillsIds && !isInExcludedSkillIds) {
         skillIds.push(id);
         element.classList.remove('text-bg-dark');
         element.classList.add('text-bg-secondary');
     }
     if (isInSkillsIds) {
         skillIds = skillIds.filter(x => x !== id);
-        notSkillIds.push(id);
+        excludedSkillIds.push(id);
         element.classList.remove('text-bg-secondary');
         element.classList.add('text-bg-danger');
     }
-    if (isInNotSkillsIds) {
-        notSkillIds = notSkillIds.filter(x => x !== id);
+    if (isInExcludedSkillIds) {
+        excludedSkillIds = excludedSkillIds.filter(x => x !== id);
         element.classList.remove('text-bg-danger');
         element.classList.add('text-bg-dark');
     }
@@ -31,20 +31,20 @@ function addSkill(element, id) {
 
 function addBenefit(element, id) {
     const isInBenefitIds = benefitIds.indexOf(id) !== -1;
-    const isInNotBenefitIds = notBenefitIds.indexOf(id) !== -1;
-    if (!isInBenefitIds && !isInNotBenefitIds) {
+    const isInExcludedBenefitIds = excludedBenefitIds.indexOf(id) !== -1;
+    if (!isInBenefitIds && !isInExcludedBenefitIds) {
         benefitIds.push(id);
         element.classList.remove('text-bg-dark');
         element.classList.add('text-bg-secondary');
     }
     if (isInBenefitIds) {
         benefitIds = benefitIds.filter(x => x !== id);
-        notBenefitIds.push(id);
+        excludedBenefitIds.push(id);
         element.classList.remove('text-bg-secondary');
         element.classList.add('text-bg-danger');
     }
-    if (isInNotBenefitIds) {
-        notBenefitIds = notBenefitIds.filter(x => x !== id);
+    if (isInExcludedBenefitIds) {
+        excludedBenefitIds = excludedBenefitIds.filter(x => x !== id);
         element.classList.remove('text-bg-danger');
         element.classList.add('text-bg-dark');
     }
@@ -52,15 +52,19 @@ function addBenefit(element, id) {
 
 function getQueryData() {
     let data = {
-        page: currentPage,
-        skillIds: skillIds,
-        notSkillIds: notSkillIds,
-        benefitIds: benefitIds,
-        notBenefitIds: notBenefitIds,
+        page: currentPage
     }
     const locationId = $('#location').val();
     const companyTypeId = $('#company-type').val();
     const query = $('#query').val();
+    if (skillIds.length > 0)
+        data.skillIds = skillIds.join(',');
+    if (excludedSkillIds.length > 0)
+        data.excludedSkillIds = excludedSkillIds.join(',');
+    if (benefitIds.length > 0)
+        data.benefitIds = benefitIds.join(',');
+    if (excludedBenefitIds.length > 0)
+        data.excludedBenefitIds = excludedBenefitIds.join(',');
     if (locationId)
         data.locationId = locationId;
     if (companyTypeId)

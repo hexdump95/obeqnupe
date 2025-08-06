@@ -57,8 +57,8 @@ public class CompanyServiceImpl implements CompanyService {
         Specification<Company> spec = new TrueSpecification<>();
         spec = spec.and(new CompanyFetchLazySpecification());
 
-        if (filter.getLocationId() == null && filter.getSkillIds().isEmpty() && filter.getNotSkillIds().isEmpty()
-                && filter.getBenefitIds().isEmpty() && filter.getNotBenefitIds().isEmpty()
+        if (filter.getLocationId() == null && filter.getSkillIds().isEmpty() && filter.getExcludedSkillIds().isEmpty()
+                && filter.getBenefitIds().isEmpty() && filter.getExcludedBenefitIds().isEmpty()
                 && filter.getCompanyTypeId() == null && (filter.getQuery() == null || filter.getQuery().isEmpty())) {
             spec = spec.and(new CompanyHasNoSkillsAndNoBenefitsSpecification());
 
@@ -67,16 +67,16 @@ public class CompanyServiceImpl implements CompanyService {
                 spec = spec.and(new CompanyHasBenefitsSpecification(filter.getBenefitIds()));
             }
 
-            if (filter.getNotBenefitIds() != null && !filter.getNotBenefitIds().isEmpty()) {
-                spec = spec.and(new CompanyHasNotBenefitsSpecification(filter.getNotBenefitIds()));
+            if (filter.getExcludedBenefitIds() != null && !filter.getExcludedBenefitIds().isEmpty()) {
+                spec = spec.and(new CompanyHasNotBenefitsSpecification(filter.getExcludedBenefitIds()));
             }
 
             if (filter.getSkillIds() != null && !filter.getSkillIds().isEmpty()) {
                 spec = spec.and(new CompanyHasSkillsSpecification(filter.getSkillIds()));
             }
 
-            if(filter.getNotSkillIds() != null && !filter.getNotSkillIds().isEmpty()) {
-                spec = spec.and(new CompanyHasNotSkillsSpecification(filter.getNotSkillIds()));
+            if(filter.getExcludedSkillIds() != null && !filter.getExcludedSkillIds().isEmpty()) {
+                spec = spec.and(new CompanyHasNotSkillsSpecification(filter.getExcludedSkillIds()));
             }
 
             if (filter.getLocationId() != null) {
